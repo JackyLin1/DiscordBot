@@ -2,12 +2,12 @@ require('dotenv').config();
 
 // Require the necessary discord.js classes
 const { Client, Intents } = require('discord.js');
-
+const { joinVoiceChannel, VoiceConnection } = require('@discordjs/voice');
 
 // Create a new client instance
 const client = new Client({ intents: [
 	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.GUILD_MESSAGES
+	Intents.FLAGS.GUILD_MESSAGES,
 ]});
 
 
@@ -17,23 +17,21 @@ client.on('ready', () => {
 });
 
 client.on ('messageCreate', (message) => {
-	console.log(message.content);
+	if (message.content === 'join') {
+		joinVoiceChannel({
+			channelId: message.member.voice.channel.id,
+			guildId: message.member.guild.id,
+			adapterCreator: message.channel.guild.voiceAdapterCreator
+	})
+	}
+	if (message.content === 'leave') {
+		console.log("leave")
+		joinVoiceChannel({
+			channelId: message.member.voice.channel.id,
+			guildId: message.member.guild.id,
+			adapterCreator: message.channel.guild.voiceAdapterCreator
+		}).destroy();
+	}
 })
 
 client.login(process.env.DISCORDJS_BOT_TOKEN);
-
-
-
-	// if (isReady && message.content === 'HI') {
-	// 	isReady = false;
-	// 	var voiceChannel = message.member.voiceChannel;
-	// 	voiceChannel.join()
-	// 	// .then(connection => {
-	// 	// 	const dispatcher = connection.playFile ('./Audio/gab.mp3');
-	// 	// 	dispatcher.on ("end", end => {
-	// 	// 		voiceChannel.leave();
-	// 	// 	});	
-	// 	// })
-	// 	// .catch(err => console.log(err));
-	// 	// isReady = true;
-	// }
